@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:bionic
 MAINTAINER u6k <u6k.apps@gmail.com>
 
 # ビルドに必要なソフトウェアをインストール
@@ -46,11 +46,14 @@ RUN tar zxvf SPTK-3.9.tar.gz && \
     make install
 
 # Tcl、その他をセットアップ
-RUN apt-get install -y tk8.4 bc
+# avoid prompt when installing tk8.6
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tk8.6
+RUN apt-get install -y bc
 
 # 音響モデルを作成
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+VOLUME mnt
 
-chmod a+x /usr/local/bin/entrypoint.sh
+RUN chmod a+x /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
